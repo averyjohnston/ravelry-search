@@ -1,3 +1,3 @@
-# Ravelry GraphQL (WIP)
+# Ravelry Search (WIP)
 
 TODO
