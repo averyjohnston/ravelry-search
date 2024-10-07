@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import ErrorPage from './pages/ErrorPage';
 import QueueSortPage from './pages/QueueSortPage';
@@ -11,6 +11,10 @@ const router = createBrowserRouter([
     element: <Root />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        index: true,
+        element: <Navigate to="/queue-sort" replace={true} />,
+      },
       {
         path: '/queue-sort',
         element: <QueueSortPage />,
