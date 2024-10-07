@@ -12,17 +12,22 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <Navigate to="/queue-sort" replace={true} />,
-      },
-      {
-        path: '/queue-sort',
-        element: <QueueSortPage />,
-        loader: QueueSortPage.loader,
-      },
-      {
-        path: '/random-picker',
-        element: <RandomPickerPage />,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/queue-sort" replace={true} />,
+          },
+          {
+            path: '/queue-sort',
+            element: <QueueSortPage />,
+            loader: QueueSortPage.loader,
+          },
+          {
+            path: '/random-picker',
+            element: <RandomPickerPage />,
+          },
+        ],
       },
     ],
   },
