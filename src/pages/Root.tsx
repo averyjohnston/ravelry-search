@@ -1,4 +1,6 @@
-import { Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+
+import SidebarLink from '../components/SidebarLink';
 
 import './Root.scss';
 
@@ -10,7 +12,7 @@ export default function Root() {
       <div id="sidebar">
         <ul>
           <li>
-            <Link to="/queue-sort">Sorted Queue</Link>
+            <SidebarLink to="/queue-sort">Sorted Queue</SidebarLink>
           </li>
           <li>Other links coming soon...</li>
         </ul>
