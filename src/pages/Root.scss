@@ -21,18 +21,6 @@
     li {
       margin-bottom: 12px;
     }
-
-    a {
-      color: blue;
-      padding: 8px;
-      text-decoration: none;
-
-      &.active {
-        background: #b9a2ff;
-        color: black;
-        border-radius: 8px;
-      }
-    }
   }
 
   #content {
