@@ -14,7 +14,9 @@ export default function Root() {
           <li>
             <SidebarLink to="/queue-sort">Sorted Queue</SidebarLink>
           </li>
-          <li>Other links coming soon...</li>
+          <li>
+            <SidebarLink to="/random-picker">Random Pickers</SidebarLink>
+          </li>
         </ul>
       </div>
       <div id="content">

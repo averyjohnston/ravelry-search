@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import ErrorPage from './pages/ErrorPage';
 import QueueSortPage from './pages/QueueSortPage';
+import RandomPickerPage from './pages/RandomPickerPage';
 import Root from './pages/Root';
 
 const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
         path: '/queue-sort',
         element: <QueueSortPage />,
         loader: QueueSortPage.loader,
+      },
+      {
+        path: '/random-picker',
+        element: <RandomPickerPage />,
       },
     ],
   },
