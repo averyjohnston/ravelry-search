@@ -1,0 +1,29 @@
+#app-root {
+  display: flex;
+
+  width: 100%;
+
+  #sidebar {
+    background-color: #f6f3ff;
+    border-right: 1px solid #b9a2ff;
+    box-sizing: border-box;
+    padding: 24px;
+
+    flex-basis: 300px;
+
+    height: 100vh;
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+  }
+
+  #content {
+    flex-grow: 1;
+  }
+}

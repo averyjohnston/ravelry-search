@@ -1,23 +1,19 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import ErrorPage from './pages/ErrorPage';
-import HomePage from './pages/HomePage';
-import UserDisplayPage from './pages/UserDisplayPage';
-
-// TODO: once app is hosted live, add URL to Ravelry app's allowed origins
+import QueueSortPage from './pages/QueueSortPage';
+import Root from './pages/Root';
 
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <Root />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: '/',
-        element: <HomePage />,
-      },
-      {
-        path: '/user',
-        element: <UserDisplayPage />,
-        loader: UserDisplayPage.loader,
+        path: '/queue-sort',
+        element: <QueueSortPage />,
+        loader: QueueSortPage.loader,
       },
     ],
   },
