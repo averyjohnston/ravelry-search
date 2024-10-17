@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
 
+import type { PatternList, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
 import { get, USERNAME } from '../utils';
 
 async function loader() {
@@ -29,7 +30,7 @@ async function loader() {
       ...searchParams,
       craft: 'knitting',
     }),
-  ]);
+  ]) as [QueueListEndpointResult, PatternSearchEndpointResult, PatternSearchEndpointResult];
 
   const orderedQueue = queueResult.queued_projects;
   const crochetPatterns = crochetResult.patterns;
@@ -37,7 +38,7 @@ async function loader() {
 
   const orderedIDs = orderedQueue.map(entry => entry.pattern_id);
 
-  const sortPatterns = (patterns) => {
+  const sortPatterns = (patterns: PatternList[]) => {
     const sorted = patterns.slice();
     sorted.sort((a, b) => orderedIDs.indexOf(a.id) - orderedIDs.indexOf(b.id));
     return sorted;
@@ -50,7 +51,10 @@ async function loader() {
 }
 
 export default function QueueSortPage() {
-  const data = useLoaderData();
+  const data = useLoaderData() as {
+    crochet: PatternList[],
+    knitting: PatternList[],
+  };
 
   useEffect(() => {
     console.log(data);
