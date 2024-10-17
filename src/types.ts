@@ -22,7 +22,7 @@ export interface PatternList {
   pattern_author: PatternAuthor,
   pattern_sources: PatternSourceList[],
   permalink: string,
-  personal_attributes: string | null,
+  personal_attributes: PersonalAttributes | null,
 }
 
 interface QueuedProjectSmall {
@@ -85,6 +85,13 @@ interface PatternSourceList {
   price: number | null,
   shelf_image_path: string | null,
   url: string,
+}
+
+interface PersonalAttributes {
+  bookmark_id: number | null,
+  favorited: boolean,
+  in_library: boolean,
+  queued: boolean,
 }
 
 interface Photo {
