@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
 
+import QueueCard from '../components/QueueCard';
 import type { ExtendedQueuedProjectSmall, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
 import { get, USERNAME } from '../utils';
 
@@ -56,15 +57,15 @@ async function loader() {
 }
 
 export default function QueueSortPage() {
-  const data = useLoaderData() as ExtendedQueuedProjectSmall[];
+  const queueEntries = useLoaderData() as ExtendedQueuedProjectSmall[];
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
+    console.log(queueEntries);
+  }, [queueEntries]);
 
   return (
     <div id="queue-sort-page" className="page">
-      Data loaded!
+      {queueEntries.map(entry => <QueueCard key={entry.id} queueEntry={entry} />)}
     </div>
   )
 }
