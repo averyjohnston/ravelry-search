@@ -1,60 +1,62 @@
 import { useEffect } from 'react';
 import { useLoaderData } from 'react-router-dom';
 
-import type { PatternList, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
+import type { ExtendedQueuedProjectSmall, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
 import { get, USERNAME } from '../utils';
 
 async function loader() {
-  const searchParams = {
+  const queueURL = `/people/${USERNAME}/queue/list.json`;
+  const queueSearchParams = {
     page_size: '500',
+    query_type: 'tags',
+  };
+
+  const patternURL = '/patterns/search.json';
+  const patternSearchParams = {
+    page_size: queueSearchParams.page_size,
     queuer: USERNAME || '',
   };
 
   /**
-   * Making three calls like this isn't great, but it's necessary for three reasons:
-   * 1. Neither of the endpoints include the craft in the list.
-   * 2. The queue/list endpoint doesn't allow searching by craft.
-   * 3. The patterns/search endpoint doesn't sort by queue order.
+   * Making all these calls like this isn't great, but it's necessary to combine queue order,
+   * craft, and tag information into one result. (Notably, none of the "queue" endpoints
+   * return tags, not even queue/show.)
    *
-   * Doing it this way lets us combine craft searching with proper queue order. The
-   * next best method would be getting the queue list, then hitting the patterns/show
-   * endpoint for every single entry to retrieve the craft.
+   * The next best method would be doing the queue searches, then hitting patterns/show for
+   * every single entry to retrieve the craft.
+   *
+   * We can at least avoid a couple extra searches by assuming anything that doesn't appear
+   * in the ready-to-make search is yarn-needed, and ditto for knitting vs. crochet.
    */
-  const [queueResult, crochetResult, knittingResult] = await Promise.all([
-    get(`/people/${USERNAME}/queue/list.json`, { page_size: searchParams.page_size }),
-    get('/patterns/search.json', {
-      ...searchParams,
-      craft: 'crochet',
+  const [totalQueueResult, readyToMakeQueueResult, knittingPatternResult] = await Promise.all([
+    get(queueURL, queueSearchParams),
+    get(queueURL, {
+      ...queueSearchParams,
+      query: 'ready-to-make',
     }),
-    get('/patterns/search.json', {
-      ...searchParams,
+    get(patternURL, {
+      ...patternSearchParams,
       craft: 'knitting',
     }),
-  ]) as [QueueListEndpointResult, PatternSearchEndpointResult, PatternSearchEndpointResult];
+  ]) as [QueueListEndpointResult, QueueListEndpointResult, PatternSearchEndpointResult];
 
-  const orderedQueue = queueResult.queued_projects;
-  const crochetPatterns = crochetResult.patterns;
-  const knittingPatterns = knittingResult.patterns;
+  const readyToMakeIDs = readyToMakeQueueResult.queued_projects.map(entry => entry.pattern_id);
+  const knittingIDs = knittingPatternResult.patterns.map(pattern => pattern.id);
+  const extendedQueue: ExtendedQueuedProjectSmall[] = [];
 
-  const orderedIDs = orderedQueue.map(entry => entry.pattern_id);
+  for(const queueEntry of totalQueueResult.queued_projects) {
+    extendedQueue.push({
+      ...queueEntry,
+      craft: knittingIDs.indexOf(queueEntry.pattern_id || -1) > -1 ? 'knitting' : 'crochet',
+      isReadyToMake: readyToMakeIDs.indexOf(queueEntry.pattern_id || -1) > -1,
+    });
+  }
 
-  const sortPatterns = (patterns: PatternList[]) => {
-    const sorted = patterns.slice();
-    sorted.sort((a, b) => orderedIDs.indexOf(a.id) - orderedIDs.indexOf(b.id));
-    return sorted;
-  };
-
-  return {
-    crochet: sortPatterns(crochetPatterns),
-    knitting: sortPatterns(knittingPatterns),
-  };
+  return extendedQueue;
 }
 
 export default function QueueSortPage() {
-  const data = useLoaderData() as {
-    crochet: PatternList[],
-    knitting: PatternList[],
-  };
+  const data = useLoaderData() as ExtendedQueuedProjectSmall[];
 
   useEffect(() => {
     console.log(data);

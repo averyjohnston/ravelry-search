@@ -119,3 +119,11 @@ interface UserSmall {
   tiny_photo_url: string,
   username: string,
 }
+
+
+// --- custom types ---
+
+export interface ExtendedQueuedProjectSmall extends QueuedProjectSmall {
+  craft: 'crochet' | 'knitting',
+  isReadyToMake: boolean,
+}
