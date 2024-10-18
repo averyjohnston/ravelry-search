@@ -5,10 +5,14 @@
     display: flex;
     padding: 12px 0 12px;
 
+    column-gap: 30px;
+
     position: sticky;
     top: 0;
 
     &__option {
+      user-select: none;
+
       display: flex;
       flex-direction: column;
     }

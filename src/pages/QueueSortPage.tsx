@@ -62,6 +62,10 @@ async function loader() {
 export default function QueueSortPage() {
   const queueEntries = useLoaderData() as ExtendedQueuedProjectSmall[];
   const [linkTo, setLinkTo] = useState('queue');
+  const [showCrochet, setShowCrochet] = useState(true);
+  const [showKnitting, setShowKnitting] = useState(true);
+  const [showReady, setShowReady] = useState(true);
+  const [showYarnNeeded, setShowYarnNeeded] = useState(true);
 
   useEffect(() => {
     console.log(queueEntries);
@@ -85,9 +89,39 @@ export default function QueueSortPage() {
             Pattern page
           </label>
         </div>
+        <div className="sort-controls__option">
+          Show crafts:
+          <label>
+            <input type="checkbox" name="show-crochet" checked={showCrochet} onChange={(e) => setShowCrochet(e.target.checked)} />
+            Crochet
+          </label>
+          <label>
+            <input type="checkbox" name="show-knitting" checked={showKnitting} onChange={(e) => setShowKnitting(e.target.checked)} />
+            Knitting
+          </label>
+        </div>
+        <div className="sort-controls__option">
+          Show status:
+          <label>
+            <input type="checkbox" name="show-ready" checked={showReady} onChange={(e) => setShowReady(e.target.checked)} />
+            Ready to make
+          </label>
+          <label>
+            <input type="checkbox" name="show-yarn-needed" checked={showYarnNeeded} onChange={(e) => setShowYarnNeeded(e.target.checked)} />
+            Yarn needed
+          </label>
+        </div>
       </div>
       <div className="queue-list">
-        {queueEntries.map(entry => <QueueCard linkTo={linkTo} key={entry.id} queueEntry={entry} />)}
+        {queueEntries.flatMap(entry => {
+          if (
+            entry.craft === 'crochet' && !showCrochet ||
+            entry.craft === 'knitting' && !showKnitting ||
+            entry.isReadyToMake && !showReady ||
+            !entry.isReadyToMake && !showYarnNeeded
+          ) return [];
+          return <QueueCard linkTo={linkTo} key={entry.id} queueEntry={entry} />;
+        })}
       </div>
     </div>
   )
