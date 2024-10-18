@@ -26,7 +26,7 @@ export interface PatternList {
 }
 
 interface QueuedProjectSmall {
-  best_photo: Photo,
+  best_photo: Photo | null,
   created_at: string,
   id: number,
   name: string,
