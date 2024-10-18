@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import type { ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 
 import QueueCard from '../components/QueueCard';
@@ -60,15 +61,33 @@ async function loader() {
 
 export default function QueueSortPage() {
   const queueEntries = useLoaderData() as ExtendedQueuedProjectSmall[];
+  const [linkTo, setLinkTo] = useState('queue');
 
   useEffect(() => {
     console.log(queueEntries);
   }, [queueEntries]);
 
+  const handleLinkToChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setLinkTo(e.target.value);
+  };
+
   return (
     <div id="queue-sort-page" className="page">
+      <div className="sort-controls">
+        <div className="sort-controls__option">
+          Link to:
+          <label>
+            <input type="radio" name="link-to" value="queue" checked={linkTo === 'queue'} onChange={handleLinkToChange} />
+            Queue entry
+          </label>
+          <label>
+            <input type="radio" name="link-to" value="pattern" checked={linkTo === 'pattern'} onChange={handleLinkToChange} />
+            Pattern page
+          </label>
+        </div>
+      </div>
       <div className="queue-list">
-        {queueEntries.map(entry => <QueueCard key={entry.id} queueEntry={entry} />)}
+        {queueEntries.map(entry => <QueueCard linkTo={linkTo} key={entry.id} queueEntry={entry} />)}
       </div>
     </div>
   )

@@ -1,4 +1,19 @@
 #queue-sort-page {
+  .sort-controls {
+    background: white;
+    border-bottom: 1px solid #b9a2ff;
+    display: flex;
+    padding: 12px 0 12px;
+
+    position: sticky;
+    top: 0;
+
+    &__option {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
   .queue-list {
     display: flex;
 
