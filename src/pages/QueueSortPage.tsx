@@ -5,6 +5,8 @@ import QueueCard from '../components/QueueCard';
 import type { ExtendedQueuedProjectSmall, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
 import { get, USERNAME } from '../utils';
 
+import './QueueSortPage.scss';
+
 async function loader() {
   const queueURL = `/people/${USERNAME}/queue/list.json`;
   const queueSearchParams = {
@@ -65,7 +67,9 @@ export default function QueueSortPage() {
 
   return (
     <div id="queue-sort-page" className="page">
-      {queueEntries.map(entry => <QueueCard key={entry.id} queueEntry={entry} />)}
+      <div className="queue-list">
+        {queueEntries.map(entry => <QueueCard key={entry.id} queueEntry={entry} />)}
+      </div>
     </div>
   )
 }

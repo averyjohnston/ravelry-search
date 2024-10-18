@@ -1,0 +1,57 @@
+.queue-card {
+  color: inherit;
+  display: flex;
+  text-decoration: none;
+
+  flex-direction: column;
+
+  width: 168px;
+
+  &__name {
+    display: flex;
+    margin-bottom: 9px;
+    text-align: center;
+
+    align-items: end;
+    justify-content: center;
+
+    height: 2em;
+  }
+
+  &__image {
+    background-position: center;
+    background-size: cover;
+    border: 1px solid black;
+    margin-bottom: 5px;
+
+    width: 168px;
+    height: 168px;
+  }
+
+  &__footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__craft {
+    border-radius: 4px;
+    color: white;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    &--crochet {
+      background-color: #752ca0;
+    }
+
+    &--knitting {
+      background-color: #6a6cca;
+    }
+  }
+}

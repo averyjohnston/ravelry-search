@@ -1,0 +1,9 @@
+#queue-sort-page {
+  .queue-list {
+    display: flex;
+
+    column-gap: 30px;
+    flex-wrap: wrap;
+    row-gap: 30px;
+  }
+}
