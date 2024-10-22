@@ -4,7 +4,7 @@
   text-decoration: none;
 
   &.active {
-    background: #b9a2ff;
+    background: var(--color-accent);
     color: black;
     border-radius: 8px;
   }

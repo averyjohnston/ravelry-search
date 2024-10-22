@@ -1,3 +1,7 @@
+:root {
+  --color-accent: #b9a2ff;
+}
+
 body {
   font-family: 'Open Sans', 'Helvetica', sans-serif;
   margin: 0;
