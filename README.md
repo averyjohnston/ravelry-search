@@ -16,3 +16,5 @@ Currently not hosted live, but if you want to try it yourself, you can do the fo
    ```
 
 5. In the root of the repo, run `npm run dev` and open the localhost URL in your browser.
+
+Note that the "Sorted Queue" page assumes my Ravelry tagging system is in use, so the crochet vs. knitting filter may be the only part of use to other accounts.
