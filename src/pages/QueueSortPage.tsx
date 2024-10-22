@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react';
 import { useEffect, useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import type { LoaderFunction } from 'react-router-dom';
+import { Form, useLoaderData, useSearchParams } from 'react-router-dom';
 
 import QueueCard from '../components/QueueCard';
 import type { ExtendedQueuedProjectSmall, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
@@ -8,11 +9,14 @@ import { get, USERNAME } from '../utils';
 
 import './QueueSortPage.scss';
 
-async function loader() {
+const loader: LoaderFunction = async ({ request }) => {
+  const tagFilter = new URL(request.url).searchParams.get('filter');
+
   const queueURL = `/people/${USERNAME}/queue/list.json`;
   const queueSearchParams = {
     page_size: '500',
     query_type: 'tags',
+    query: tagFilter ? `${tagFilter} OR ${tagFilter}-k` : '',
   };
 
   const patternURL = '/patterns/search.json';
@@ -61,6 +65,7 @@ async function loader() {
 
 export default function QueueSortPage() {
   const queueEntries = useLoaderData() as ExtendedQueuedProjectSmall[];
+  const [searchParams] = useSearchParams();
   const [linkTo, setLinkTo] = useState('queue');
   const [showCrochet, setShowCrochet] = useState(true);
   const [showKnitting, setShowKnitting] = useState(true);
@@ -110,6 +115,13 @@ export default function QueueSortPage() {
             <input type="checkbox" name="show-yarn-needed" checked={showYarnNeeded} onChange={(e) => setShowYarnNeeded(e.target.checked)} />
             Yarn needed
           </label>
+        </div>
+        <div className="sort-controls__option">
+          <label htmlFor="filter">Filter by project type:</label>
+          <Form>
+            <input type="text" name="filter" id="filter" defaultValue={searchParams.get('filter') || undefined} />
+            <button type="submit">Go</button>
+          </Form>
         </div>
       </div>
       <div className="queue-list">
