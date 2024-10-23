@@ -26,6 +26,7 @@ const router = createBrowserRouter([
           {
             path: '/random-picker',
             element: <RandomPickerPage />,
+            loader: RandomPickerPage.loader,
           },
         ],
       },
