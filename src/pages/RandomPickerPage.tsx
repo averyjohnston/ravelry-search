@@ -8,22 +8,40 @@ import { buildQueueURL, get, USERNAME } from '../utils';
 
 import './RandomPickerPage.scss';
 
+async function loadRandomQueueItem(params?: { [key: string]: string }) {
+  const queueSearchResult = await get(`/people/${USERNAME}/queue/list.json`, {
+    page_size: '500',
+    ...params,
+  }) as QueueListEndpointResult;
+
+  const queueItems = queueSearchResult.queued_projects;
+  const randomItem = queueItems[Math.floor(Math.random() * queueItems.length)];
+  const fullResult = await get(`/people/${USERNAME}/queue/${randomItem.id}.json`) as QueueShowEndPointResult;
+  return fullResult.queued_project;
+}
+
 const loader: LoaderFunction = async ({ request }) => {
   const choice = new URL(request.url).searchParams.get('choice');
 
   switch(choice) {
     case 'queue': {
-      const queueSearchResult = await get(`/people/${USERNAME}/queue/list.json`, {
-        page_size: '500',
-      }) as QueueListEndpointResult;
-
-      const queueItems = queueSearchResult.queued_projects;
-      const randomItem = queueItems[Math.floor(Math.random() * queueItems.length)];
-      const fullResult = await get(`/people/${USERNAME}/queue/${randomItem.id}.json`) as QueueShowEndPointResult;
+      const result = await loadRandomQueueItem();
 
       return {
         choice,
-        randomItem: fullResult.queued_project,
+        randomItem: result,
+      };
+    }
+
+    case 'queue-ready': {
+      const result = await loadRandomQueueItem({
+        query_type: 'tags',
+        query: 'ready-to-make',
+      });
+
+      return {
+        choice,
+        randomItem: result,
       };
     }
 
@@ -65,7 +83,7 @@ function buildQueueEntryDisplay(queueEntry: QueuedProjectFull) {
 
 export default function RandomPickerPage() {
   const result = useLoaderData() as {
-    choice: 'queue',
+    choice: 'queue' | 'queue-ready',
     randomItem: QueuedProjectFull,
   };
 
@@ -77,10 +95,11 @@ export default function RandomPickerPage() {
     <div id="random-picker-page" className="page">
       <Form className="header">
         <button name="choice" value="queue">Random Queue Entry</button>
+        <button name="choice" value="queue-ready">Random Queue Entry (Ready to Make)</button>
       </Form>
       <div className="content">
         {result === null && 'Click a button above!'}
-        {result?.choice === 'queue' && buildQueueEntryDisplay(result.randomItem)}
+        {(result?.choice === 'queue' || result?.choice === 'queue-ready') && buildQueueEntryDisplay(result.randomItem)}
       </div>
     </div>
   )
