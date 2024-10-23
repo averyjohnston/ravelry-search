@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import type { LoaderFunction } from 'react-router-dom';
 import { Form, useLoaderData } from 'react-router-dom';
 
+import DetailsCard from '../components/DetailsCard';
 import type { QueuedProjectFull, QueueListEndpointResult, QueueShowEndPointResult } from '../types';
-import { get, USERNAME } from '../utils';
+import { buildQueueURL, get, USERNAME } from '../utils';
 
 import './RandomPickerPage.scss';
 
@@ -22,7 +23,7 @@ const loader: LoaderFunction = async ({ request }) => {
 
       return {
         choice,
-        result: fullResult.queued_project,
+        randomItem: fullResult.queued_project,
       };
     }
 
@@ -32,8 +33,34 @@ const loader: LoaderFunction = async ({ request }) => {
 
 function buildQueueEntryDisplay(queueEntry: QueuedProjectFull) {
   return (
-    <div>Queue entry!</div>
-  )
+    <DetailsCard
+      photoURL={queueEntry.best_photo?.small2_url}
+      linkURL={buildQueueURL(queueEntry)}
+      name={queueEntry.pattern?.name || queueEntry.name}
+      details={[
+        {
+          label: 'Queued on:',
+          value: new Date(queueEntry.created_at).toLocaleDateString(undefined, {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+          }),
+        },
+        {
+          label: 'Craft:',
+          value: queueEntry.pattern?.craft.name || 'Unknown',
+        },
+        {
+          label: 'Yarn weight:',
+          value: queueEntry.pattern?.yarn_weight?.name || 'Unknown',
+        },
+        {
+          label: 'Yarn assigned?',
+          value: queueEntry.queued_stashes.length > 0 ? '✔️' : '❌',
+        },
+      ]}
+    />
+  );
 }
 
 export default function RandomPickerPage() {
