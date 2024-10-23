@@ -3,8 +3,8 @@ import type { LoaderFunction } from 'react-router-dom';
 import { Form, useLoaderData } from 'react-router-dom';
 
 import DetailsCard from '../components/DetailsCard';
-import type { QueuedProjectFull, QueueListEndpointResult, QueueShowEndPointResult } from '../types';
-import { buildQueueURL, get, USERNAME } from '../utils';
+import type { QueuedProjectFull, QueueListEndpointResult, QueueShowEndPointResult, StashList, StashSearchEndpointResult } from '../types';
+import { buildQueueURL, formatDatetime, get, USERNAME } from '../utils';
 
 import './RandomPickerPage.scss';
 
@@ -45,6 +45,23 @@ const loader: LoaderFunction = async ({ request }) => {
       };
     }
 
+    case 'stash': {
+      // stash/list endpoint includes used up yarns, with no way to filter them out
+      const stashSearchResult = await get('/stash/search.json', {
+        page_size: '500',
+        user: USERNAME || '',
+        'stash-status': 'stash',
+      }) as StashSearchEndpointResult;
+
+      const stashItems = stashSearchResult.stashes;
+      const randomItem = stashItems[Math.floor(Math.random() * stashItems.length)];
+
+      return {
+        choice,
+        randomItem,
+      };
+    }
+
     default: return null;
   }
 };
@@ -58,11 +75,7 @@ function buildQueueEntryDisplay(queueEntry: QueuedProjectFull) {
       details={[
         {
           label: 'Queued on:',
-          value: new Date(queueEntry.created_at).toLocaleDateString(undefined, {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          }),
+          value: formatDatetime(queueEntry.created_at),
         },
         {
           label: 'Craft:',
@@ -81,10 +94,37 @@ function buildQueueEntryDisplay(queueEntry: QueuedProjectFull) {
   );
 }
 
+function buildStashEntryDisplay(stashEntry: StashList) {
+  return (
+    <DetailsCard
+      photoURL={stashEntry.first_photo?.small2_url}
+      linkURL={`https://www.ravelry.com/people/${USERNAME}/stash/${stashEntry.permalink}`}
+      name={stashEntry.name}
+      details={[
+        {
+          label: 'Stashed on:',
+          value: formatDatetime(stashEntry.created_at),
+        },
+        {
+          label: 'Yarn weight:',
+          value: stashEntry.yarn_weight_name,
+        },
+        {
+          label: 'Available?',
+          value: stashEntry.tag_names.includes('available') ? '✔️' : '❌',
+        },
+      ]}
+    />
+  )
+}
+
 export default function RandomPickerPage() {
   const result = useLoaderData() as {
     choice: 'queue' | 'queue-ready',
     randomItem: QueuedProjectFull,
+  } | {
+    choice: 'stash',
+    randomItem: StashList,
   };
 
   useEffect(() => {
@@ -96,10 +136,12 @@ export default function RandomPickerPage() {
       <Form className="header">
         <button name="choice" value="queue">Random Queue Entry</button>
         <button name="choice" value="queue-ready">Random Queue Entry (Ready to Make)</button>
+        <button name="choice" value="stash">Random Stash Entry</button>
       </Form>
       <div className="content">
         {result === null && 'Click a button above!'}
         {(result?.choice === 'queue' || result?.choice === 'queue-ready') && buildQueueEntryDisplay(result.randomItem)}
+        {result?.choice === 'stash' && buildStashEntryDisplay(result.randomItem)}
       </div>
     </div>
   )

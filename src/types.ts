@@ -20,6 +20,10 @@ export interface PatternSearchEndpointResult {
   paginator: Paginator,
 }
 
+export interface StashSearchEndpointResult {
+  stashes: StashList[],
+  paginator: Paginator,
+}
 
 // --- first-level result structures ---
 
@@ -188,12 +192,60 @@ interface StashFull {
   yarn_weight_name: string,
 }
 
+export interface StashList {
+  color_family_name: string | null,
+  colorway_name: string,
+  comments_count: number,
+  created_at: string,
+  dye_lot: string | null,
+  favorites_count: number,
+  first_photo: Photo,
+  handspun: boolean,
+  has_photo: boolean,
+  id: number,
+  location: string,
+  long_yarn_weight_name: string,
+  name: string,
+  permalink: string,
+  personal_yarn_weight: YarnWeight | null,
+  stash_status: StashStatus,
+  tag_names: string[],
+  updated_at: string,
+  user: UserSmall,
+  yarn: YarnStashList,
+  yarn_weight_name: string,
+}
+
 interface YarnSmall {
   id: number,
   name: string,
   permalink: string,
   yarn_company_id: number,
   yarn_company_name: string,
+}
+
+interface YarnStashList {
+  discontinued: boolean,
+  gauge_divisor: number,
+  grams: number,
+  id: number,
+  machine_washable: boolean,
+  max_gauge: number,
+  min_gauge: number,
+  name: string,
+  notes_html: string | null,
+  permalink: string,
+  photos: Photo[],
+  rating_average: number,
+  rating_count: number,
+  rating_total: number,
+  texture: string,
+  thread_size: number | null,
+  wpi: number | null,
+  yardage: number,
+  yarn_company: YarnCompany,
+  yarn_company_name: string,
+  yarn_weight: YarnWeight,
 }
 
 interface YarnFull {

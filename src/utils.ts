@@ -24,3 +24,11 @@ export function buildQueueURL(queueEntry: QueuedProjectFull | ExtendedQueuedProj
   const queuePosition = queueEntry.position_in_queue;
   return `https://www.ravelry.com/people/${USERNAME}/queue?view=thumblist&page=${Math.ceil(queuePosition / 30)}#q${queuePosition}`;
 }
+
+export function formatDatetime(datetime: string) {
+  return new Date(datetime).toLocaleDateString(undefined, {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
