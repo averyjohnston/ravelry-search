@@ -19,3 +19,18 @@ input, button {
 p, ul {
   margin-top: 0;
 }
+
+.block-link {
+  color: inherit;
+  display: flex;
+  text-decoration: none;
+}
+
+.card-image {
+  background-position: center;
+  background-size: cover;
+  border: 1px solid black;
+
+  width: 168px;
+  height: 168px;
+}
