@@ -5,6 +5,10 @@ export interface QueueListEndpointResult {
   paginator: Paginator,
 }
 
+export interface QueueShowEndPointResult {
+  queued_project: QueuedProjectFull,
+}
+
 export interface PatternSearchEndpointResult {
   patterns: PatternList[],
   paginator: Paginator,
@@ -12,6 +16,36 @@ export interface PatternSearchEndpointResult {
 
 
 // --- first-level result structures ---
+
+interface PackFull {
+  color_family_id: number | null,
+  colorway: string | null,
+  dye_lot: string | null,
+  grams_per_skein: number | null,
+  id: number | null,
+  meters_per_skein: number | null,
+  ounces_per_skein: number | null,
+  personal_name: string | null,
+  prefer_metric_length: boolean | null,
+  prefer_metric_weight: boolean | null,
+  primary_pack_id: number | null,
+  project_id: number | null,
+  quantity_description: string | null,
+  shop_id: number | null,
+  shop_name: string | null,
+  skeins: number | null,
+  stash_id: number | null,
+  thread_size: number | null,
+  total_grams: number | null,
+  total_meters: number | null,
+  total_ounces: number | null,
+  total_yards: number | null,
+  yards_per_skein: number | null,
+  yarn: YarnSmall | null,
+  yarn_id: number | null,
+  yarn_name: string | null,
+  yarn_weight: YarnWeight,
+}
 
 export interface PatternList {
   designer: PatternAuthor,
@@ -23,6 +57,63 @@ export interface PatternList {
   pattern_sources: PatternSourceList[],
   permalink: string,
   personal_attributes: PersonalAttributes | null,
+}
+
+interface PatternFull {
+  comments_count: number,
+  craft: CraftList,
+  created_at: string,
+  currency: string,
+  currency_symbol: string,
+  difficulty_average: number,
+  difficulty_count: number | null,
+  download_location: DownloadLocation,
+  downloadable: boolean,
+  favorites_count: number,
+  free: boolean,
+  gauge: string,
+  gauge_description: string,
+  gauge_divisor: number,
+  gauge_pattern: string,
+  generally_available: string,
+  has_uk_terminology: boolean | null,
+  has_us_terminology: boolean | null,
+  id: number,
+  languages: Language[],
+  name: string,
+  notes_html: string,
+  packs: PackFull[],
+  pattern_attributes: PatternAttribute[],
+  pattern_author: PatternAuthor[],
+  pattern_categories: PatternCategory[],
+  pattern_needle_sizes: NeedleSize[],
+  pattern_type: PatternType,
+  pdf_in_library: boolean,
+  pdf_url: string,
+  permalink: string,
+  personal_attributes: PersonalAttributes,
+  photos: Photo[],
+  price: string,
+  printings: Printing[],
+  product_id: number,
+  projects_count: number,
+  published: string,
+  queued_projects_count: number,
+  rating_average: number,
+  rating_count: number | null,
+  ravelry_download: boolean,
+  row_gauge: number,
+  sizes_available: string,
+  unlisted_product_ids: number[] | null,
+  updated_at: string,
+  url: string,
+  volumes_in_library: number[] | null,
+  yardage: number,
+  yardage_description: string,
+  yardage_max: number,
+  yarn_list_type: number,
+  yarn_weight: YarnWeight,
+  yarn_weight_description: string,
 }
 
 interface QueuedProjectSmall {
@@ -44,8 +135,167 @@ interface QueuedProjectSmall {
   yarn_name: string,
 }
 
+export interface QueuedProjectFull {
+  best_photo: Photo | null,
+  created_at: string,
+  id: number,
+  name: string,
+  notes: string,
+  notes_html: string,
+  pattern: PatternFull,
+  pattern_id: number | null,
+  pattern_name: string,
+  position_in_queue: number,
+  queued_stashes: QueuedStashFull[],
+  skeins: number | null,
+  sort_order: number | null,
+  user_id: number,
+  yarn_id: number | null,
+  yarn_name: string | null,
+}
+
+interface StashFull {
+  color_family_name: string | null,
+  colorway_name: string,
+  comments_count: number,
+  created_at: string,
+  dye_lot: string,
+  favorites_count: number,
+  handspun: boolean,
+  has_photo: boolean,
+  id: number,
+  location: string,
+  long_yarn_weight_name: string,
+  name: string,
+  notes: string,
+  notes_html: string,
+  packs: PackStash[],
+  permalink: string,
+  personal_yarn_weight: YarnWeight | null,
+  photos: Photo[],
+  stash_status: StashStatus,
+  tag_names: string[],
+  updated_at: string,
+  user: UserSmall,
+  user_id: number,
+  yarn: YarnFull,
+  yarn_weight_name: string,
+}
+
+interface YarnSmall {
+  id: number,
+  name: string,
+  permalink: string,
+  yarn_company_id: number,
+  yarn_company_name: string,
+}
+
+interface YarnFull {
+  discontinued: boolean,
+  gauge_divisor: number,
+  grams: number,
+  id: number,
+  machine_washable: boolean,
+  max_gauge: number | null,
+  max_hook_size: NeedleSize | null,
+  max_needle_size: NeedleSize | null,
+  min_gauge: number | null,
+  min_hook_size: NeedleSize | null,
+  name: string,
+  notes_html: string,
+  permalink: string,
+  photos: Photo[],
+  rating_average: number,
+  rating_count: number,
+  rating_total: number,
+  texture: string,
+  thread_size: number | null,
+  wpi: number | null,
+  yardage: number,
+  yarn_attributes: YarnAttribute[],
+  yarn_company: YarnCompany,
+  yarn_fibers: YarnFiber[],
+  yarn_weight: YarnWeight[],
+  yarn_weight_name: string,
+}
+
 
 // --- second-level structures ---
+
+interface CraftList {
+  id: number,
+  name: string,
+  permalink: string,
+}
+
+interface DownloadLocation {
+  free: boolean,
+  type: string,
+  url: string,
+}
+
+interface FiberCategory {
+  id: number,
+  name: string,
+  parent?: FiberCategory,
+  permalink: string,
+}
+
+interface FiberType {
+  animal_fiber: boolean,
+  id: number,
+  name: string,
+  synthetic: boolean,
+  vegetable_fiber: boolean,
+}
+
+interface Language {
+  code: string,
+  id: number,
+  name: string,
+  permalink: string,
+  short_name: string,
+  universal: boolean,
+}
+
+interface NeedleSize {
+  crochet: boolean,
+  hook: string | null,
+  id: number,
+  metric: number,
+  name: string,
+  pretty_metric: string,
+  us: string | null,
+  us_steel: string | null,
+}
+
+interface PackStash {
+  color_attributes: string[],
+  color_family_id: number | null,
+  colorway: string,
+  dye_lot: string,
+  grams_per_skein: number,
+  id: number,
+  meters_per_skein: number,
+  ounces_per_skein: number,
+  personal_name: string | null,
+  prefer_metric_length: boolean,
+  prefer_metric_weight: boolean,
+  primary_pack_id: number | null,
+  project_id: number | null,
+  quantity_description: string | null,
+  shop_id: number | null,
+  shop_name: string | null,
+  skeins: number,
+  stash_id: number,
+  thread_size: string | null,
+  total_grams: number,
+  total_meters: number,
+  total_ounces: number,
+  total_yards: number,
+  yards_per_skein: number,
+  yarn_id: number,
+}
 
 interface Paginator {
   last_page: number,
@@ -53,6 +303,11 @@ interface Paginator {
   page_count: number,
   page_size: number,
   results: number,
+}
+
+interface PatternAttribute {
+  id: number,
+  permalink: string,
 }
 
 interface PatternAuthor {
@@ -64,6 +319,13 @@ interface PatternAuthor {
   patterns_count: number,
   permalink: string,
   users: UserSmall[],
+}
+
+interface PatternCategory {
+  id: number,
+  name: string,
+  parent: PatternCategory,
+  permalink: string,
 }
 
 /**
@@ -85,6 +347,13 @@ interface PatternSourceList {
   price: number | null,
   shelf_image_path: string | null,
   url: string,
+}
+
+interface PatternType {
+  clothing: boolean,
+  id: number,
+  name: string,
+  permalink: string,
 }
 
 interface PersonalAttributes {
@@ -111,6 +380,27 @@ interface Photo {
   y_offset: number | null,
 }
 
+interface Printing {
+  created_at: string,
+  id: number,
+  pattern_id: number,
+  primary_source: boolean | null,
+}
+
+interface QueuedStashFull {
+  created_at: string,
+  id: number,
+  queued_project_id: number,
+  stash: StashFull,
+  stash_id: number,
+  updated_at: string,
+}
+
+interface StashStatus {
+  id: number,
+  name: string,
+}
+
 interface UserSmall {
   id: number,
   large_photo_url?: string,
@@ -118,6 +408,46 @@ interface UserSmall {
   small_photo_url: string,
   tiny_photo_url: string,
   username: string,
+}
+
+interface YarnAttribute {
+  description: string,
+  id: number,
+  name: string,
+  permalink: string,
+  yarn_attribute_group: YarnAttributeGroup,
+}
+
+interface YarnAttributeGroup {
+  id: number,
+  name: string,
+  permalink: string,
+}
+
+interface YarnCompany {
+  id: number,
+  name: string,
+  permalink: string,
+  url: string,
+  yarns_count: number,
+}
+
+interface YarnFiber {
+  fiber_category: FiberCategory,
+  fiber_type: FiberType,
+  id: number,
+  percentage: number,
+}
+
+interface YarnWeight {
+  crochet_gauge: string | null,
+  id: number,
+  knit_gauge: string | null,
+  max_gauge: string | null,
+  min_gauge: string | null,
+  name: string,
+  ply: string,
+  wpi: number | null,
 }
 
 
