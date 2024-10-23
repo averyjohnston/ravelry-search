@@ -32,3 +32,7 @@ export function formatDatetime(datetime: string) {
     year: 'numeric',
   });
 }
+
+export function pickRandomItem<T>(items: T[]) {
+  return items[Math.floor(Math.random() * items.length)];
+}

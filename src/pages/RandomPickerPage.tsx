@@ -3,8 +3,8 @@ import type { LoaderFunction } from 'react-router-dom';
 import { Form, useLoaderData } from 'react-router-dom';
 
 import DetailsCard from '../components/DetailsCard';
-import type { QueuedProjectFull, QueueListEndpointResult, QueueShowEndPointResult, StashList, StashSearchEndpointResult } from '../types';
-import { buildQueueURL, formatDatetime, get, USERNAME } from '../utils';
+import type { ProjectList, ProjectSearchEndpointResult, QueuedProjectFull, QueueListEndpointResult, QueueShowEndPointResult, StashList, StashSearchEndpointResult } from '../types';
+import { buildQueueURL, formatDatetime, get, pickRandomItem, USERNAME } from '../utils';
 
 import './RandomPickerPage.scss';
 
@@ -14,8 +14,7 @@ async function loadRandomQueueItem(params?: { [key: string]: string }) {
     ...params,
   }) as QueueListEndpointResult;
 
-  const queueItems = queueSearchResult.queued_projects;
-  const randomItem = queueItems[Math.floor(Math.random() * queueItems.length)];
+  const randomItem = pickRandomItem(queueSearchResult.queued_projects);
   const fullResult = await get(`/people/${USERNAME}/queue/${randomItem.id}.json`) as QueueShowEndPointResult;
   return fullResult.queued_project;
 }
@@ -53,13 +52,24 @@ const loader: LoaderFunction = async ({ request }) => {
         'stash-status': 'stash',
       }) as StashSearchEndpointResult;
 
-      const stashItems = stashSearchResult.stashes;
-      const randomItem = stashItems[Math.floor(Math.random() * stashItems.length)];
+      return {
+        choice,
+        randomItem: pickRandomItem(stashSearchResult.stashes),
+      };
+    }
+
+    case 'wip': {
+      const projectSearchResult = await get('/projects/search.json', {
+        page_size: '500',
+        by: USERNAME || '',
+        status: 'in-progress',
+        sort: 'started',
+      }) as ProjectSearchEndpointResult;
 
       return {
         choice,
-        randomItem,
-      };
+        randomItem: pickRandomItem(projectSearchResult.projects),
+      }
     }
 
     default: return null;
@@ -115,7 +125,37 @@ function buildStashEntryDisplay(stashEntry: StashList) {
         },
       ]}
     />
-  )
+  );
+}
+
+function buildProjectDisplay(project: ProjectList) {
+  let projectType = 'Unknown';
+  if (project.tag_names.length > 0) {
+    const firstTag = project.tag_names[0];
+    projectType = (firstTag.charAt(0).toUpperCase() + firstTag.slice(1)).replace('-k', '').replace('-', ' ');
+  }
+
+  return (
+    <DetailsCard
+      photoURL={project.first_photo?.small2_url}
+      linkURL={`https://www.ravelry.com/projects/${USERNAME}/${project.permalink}`}
+      name={project.name}
+      details={[
+        {
+          label: 'Created on:',
+          value: formatDatetime(project.created_at),
+        },
+        {
+          label: 'Craft:',
+          value: project.craft_name || 'Unknown',
+        },
+        {
+          label: 'Project type:',
+          value: projectType,
+        },
+      ]}
+    />
+  );
 }
 
 export default function RandomPickerPage() {
@@ -125,6 +165,9 @@ export default function RandomPickerPage() {
   } | {
     choice: 'stash',
     randomItem: StashList,
+  } | {
+    choice: 'wip',
+    randomItem: ProjectList,
   };
 
   useEffect(() => {
@@ -137,11 +180,13 @@ export default function RandomPickerPage() {
         <button name="choice" value="queue">Random Queue Entry</button>
         <button name="choice" value="queue-ready">Random Queue Entry (Ready to Make)</button>
         <button name="choice" value="stash">Random Stash Entry</button>
+        <button name="choice" value="wip">Random WIP Project</button>
       </Form>
       <div className="content">
         {result === null && 'Click a button above!'}
         {(result?.choice === 'queue' || result?.choice === 'queue-ready') && buildQueueEntryDisplay(result.randomItem)}
         {result?.choice === 'stash' && buildStashEntryDisplay(result.randomItem)}
+        {result?.choice === 'wip' && buildProjectDisplay(result.randomItem)}
       </div>
     </div>
   )

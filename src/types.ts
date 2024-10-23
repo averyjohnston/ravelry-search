@@ -20,6 +20,11 @@ export interface PatternSearchEndpointResult {
   paginator: Paginator,
 }
 
+export interface ProjectSearchEndpointResult {
+  projects: ProjectList[],
+  paginator: Paginator,
+}
+
 export interface StashSearchEndpointResult {
   stashes: StashList[],
   paginator: Paginator,
@@ -124,6 +129,45 @@ interface PatternFull {
   yarn_list_type: number,
   yarn_weight: YarnWeight,
   yarn_weight_description: string,
+}
+
+export interface ProjectList {
+  comments_count: number,
+  completed: string | null,
+  completed_day_set: boolean,
+  craft_id: number | null,
+  craft_name: string | null,
+  created_at: string,
+  ends_per_inch: number | null,
+  favorites_count: number,
+  first_photo: Photo | null,
+  gauge: number | null,
+  gauge_divisor: number | null,
+  gauge_pattern: string,
+  gauge_repeats: number | null,
+  id: number,
+  links: object,
+  made_for: string,
+  made_for_user_id: number | null,
+  name: string,
+  pattern_id: number | null,
+  pattern_name: string | null,
+  permalink: string,
+  photos_count: number,
+  picks_per_inch: number | null,
+  progress: number | null,
+  project_status_changed: string,
+  project_status_id: number,
+  rating: number | null,
+  row_gauge: number | null,
+  size: string,
+  started: string | null,
+  started_day_set: boolean,
+  status_name: string,
+  tag_names: string[],
+  updated_at: string,
+  user: UserSmall,
+  user_id: number,
 }
 
 interface QueuedProjectSmall {
