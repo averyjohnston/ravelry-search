@@ -1,3 +1,9 @@
+/**
+ * Note: Ravelry's API docs are woefully lacking on many of these interfaces.
+ * Type information is a combination of the docs, actual observed data, and
+ * educated guessing. Some fields may be missing or wrong.
+ */
+
 // --- endpoint results ---
 
 export interface QueueListEndpointResult {
@@ -328,11 +334,6 @@ interface PatternCategory {
   permalink: string,
 }
 
-/**
- * Note: The API docs are woefully out of date here and missing a ton of info.
- * Types listed here are taken from the docs to avoid guessing, but if you
- * need more data, check one of the actual returned objects.
- */
 interface PatternSourceList {
   amazon_rating: number | null,
   amazon_url: string | null,
