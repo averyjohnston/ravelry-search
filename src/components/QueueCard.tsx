@@ -1,5 +1,5 @@
 import type { ExtendedQueuedProjectSmall } from '../types';
-import { USERNAME } from '../utils';
+import { DEFAULT_IMAGE, USERNAME } from '../utils';
 
 import './QueueCard.scss';
 
@@ -8,8 +8,7 @@ export default function QueueCard(props: {
   linkTo: string,
 }) {
   const { queueEntry, linkTo } = props;
-  const photoURL = queueEntry.best_photo?.small_url ||
-    'https://www.ravelry.com/images/assets/illustrations/color/svg/blank-skein-herdwick.svg?v=6';
+  const photoURL = queueEntry.best_photo?.small_url || DEFAULT_IMAGE;
 
   let url = '';
   if (linkTo === 'queue') {

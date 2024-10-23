@@ -1,6 +1,7 @@
 const { VITE_RAVELRY_USERNAME, VITE_RAVELRY_PASSWORD, VITE_RAVELRY_ACCOUNT_NAME } = import.meta.env;
 
 export const USERNAME = VITE_RAVELRY_ACCOUNT_NAME as string | undefined;
+export const DEFAULT_IMAGE = 'https://www.ravelry.com/images/assets/illustrations/color/svg/blank-skein-herdwick.svg?v=6';
 
 // TODO: implement caching https://www.ravelry.com/api#extra_etags
 
