@@ -1,3 +1,5 @@
+import type { ExtendedQueuedProjectSmall, QueuedProjectFull } from './types';
+
 const { VITE_RAVELRY_USERNAME, VITE_RAVELRY_PASSWORD, VITE_RAVELRY_ACCOUNT_NAME } = import.meta.env;
 
 export const USERNAME = VITE_RAVELRY_ACCOUNT_NAME as string | undefined;
@@ -16,4 +18,9 @@ export async function get(path: string, params?: { [key: string]: string }) {
   // types should be handled on the caller side
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return await response.json();
+}
+
+export function buildQueueURL(queueEntry: QueuedProjectFull | ExtendedQueuedProjectSmall) {
+  const queuePosition = queueEntry.position_in_queue;
+  return `https://www.ravelry.com/people/${USERNAME}/queue?view=thumblist&page=${Math.ceil(queuePosition / 30)}#q${queuePosition}`;
 }
