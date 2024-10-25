@@ -4,8 +4,6 @@ import SidebarLink from '../components/SidebarLink';
 
 import './Root.scss';
 
-// TODO: allow toggling of sidebar
-
 // TODO: reattempt moving a project into the queue?
 // delete project, add queue entry, option to mark stash entries as available?
 // carry over notes + private notes? (latter should be visible if you're the project owner)
