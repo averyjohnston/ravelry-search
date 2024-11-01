@@ -8,7 +8,7 @@ export default function RavelryCard(props: PropsWithChildren<{
   headerText: string,
   imageURL?: string,
   linkURL: string,
-  className: string,
+  className?: string,
 }>) {
   const { headerText, imageURL, linkURL, className, children } = props;
   const renderedImageURL = imageURL || DEFAULT_IMAGE;
