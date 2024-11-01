@@ -10,4 +10,16 @@
       align-items: center;
     }
   }
+
+  .card-wrapper {
+    display: flex;
+
+    flex-direction: column;
+
+    button {
+      cursor: pointer;
+
+      width: 100%;
+    }
+  }
 }

@@ -33,7 +33,8 @@ const router = createBrowserRouter([
             path: '/project-to-queue',
             element: <ProjectToQueuePage />,
             loader: ProjectToQueuePage.loader,
-          }
+            action: ProjectToQueuePage.action,
+          },
         ],
       },
     ],
