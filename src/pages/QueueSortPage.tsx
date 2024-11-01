@@ -88,7 +88,7 @@ export default function QueueSortPage() {
 
   return (
     <div id="queue-sort-page" className="page">
-      <div className="sort-controls header">
+      <div className="sort-controls header header--sticky">
         <div className="sort-controls__option">
           Link to:
           <label>

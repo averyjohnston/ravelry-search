@@ -25,6 +25,14 @@ p, ul {
   padding: 0 0 20px;
 
   width: 100%;
+
+  &--sticky {
+    background: white;
+    padding: 12px 0 12px;
+
+    position: sticky;
+    top: 0;
+  }
 }
 
 .content {
