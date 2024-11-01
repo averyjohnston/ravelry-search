@@ -24,7 +24,6 @@ const action: ActionFunction = async ({ request }) => {
   return null;
 };
 
-// TODO: if deleteProject is unchecked, do NOT add available tag, even if that one IS checked
 // TODO: if project is deleted, show packs that were on it so you can manually assign them to the queue entry if needed
 // TODO: filter out projects that don't have a pattern? or show an error if attempted?
 // or can you add a queue entry with just the name and maybe the URL if present...?
@@ -68,7 +67,7 @@ export default function ProjectToQueuePage() {
               submit({
                 projectID: project.id,
                 shouldDelete: deleteProject,
-                shouldAddAvailTag: addAvailableTag,
+                shouldAddAvailTag: deleteProject && addAvailableTag, // don't add avail tags if both boxes were checked at some point, but delete was unchecked later
               }, { method: 'post' });
             }}>Transfer</button>
           </div>
