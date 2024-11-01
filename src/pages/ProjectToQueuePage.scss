@@ -1,0 +1,13 @@
+#project-to-queue-page {
+  .options {
+    display: flex;
+
+    label {
+      display: flex;
+      margin-right: 12px;
+      user-select: none;
+
+      align-items: center;
+    }
+  }
+}

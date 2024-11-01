@@ -22,6 +22,9 @@ export default function Root() {
           <li>
             <SidebarLink to="/random-picker">Random Pickers</SidebarLink>
           </li>
+          <li>
+            <SidebarLink to="/project-to-queue">Project to Queue Transfer</SidebarLink>
+          </li>
         </ul>
       </div>
       <div id="content">

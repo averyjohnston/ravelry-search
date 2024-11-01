@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import ErrorPage from './pages/ErrorPage';
+import ProjectToQueuePage from './pages/ProjectToQueuePage';
 import QueueSortPage from './pages/QueueSortPage';
 import RandomPickerPage from './pages/RandomPickerPage';
 import Root from './pages/Root';
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
             element: <RandomPickerPage />,
             loader: RandomPickerPage.loader,
           },
+          {
+            path: '/project-to-queue',
+            element: <ProjectToQueuePage />,
+            loader: ProjectToQueuePage.loader,
+          }
         ],
       },
     ],
