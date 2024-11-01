@@ -88,7 +88,7 @@ export default function QueueSortPage() {
 
   return (
     <div id="queue-sort-page" className="page">
-      <div className="sort-controls">
+      <div className="sort-controls header">
         <div className="sort-controls__option">
           Link to:
           <label>
@@ -130,7 +130,7 @@ export default function QueueSortPage() {
           </Form>
         </div>
       </div>
-      <div className="queue-list">
+      <div className="content">
         {queueEntries.flatMap(entry => {
           if (
             entry.craft === 'crochet' && !showCrochet ||

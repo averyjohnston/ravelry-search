@@ -1,7 +1,6 @@
 #queue-sort-page {
   .sort-controls {
     background: white;
-    border-bottom: 1px solid var(--color-accent);
     display: flex;
     padding: 12px 0 12px;
 
@@ -22,9 +21,8 @@
     }
   }
 
-  .queue-list {
+  .content {
     display: flex;
-    padding-top: 12px;
 
     column-gap: 30px;
     flex-wrap: wrap;
