@@ -1,0 +1,27 @@
+.ravelry-card {
+  flex-direction: column;
+
+  width: 168px;
+
+  &__name {
+    display: flex;
+    margin-bottom: 9px;
+    text-align: center;
+
+    align-items: end;
+    justify-content: center;
+
+    height: 2em;
+  }
+
+  &__image {
+    margin-bottom: 5px;
+  }
+
+  &__footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+  }
+}
