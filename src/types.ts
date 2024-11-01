@@ -20,6 +20,11 @@ export interface PatternSearchEndpointResult {
   paginator: Paginator,
 }
 
+export interface ProjectListEndpointResult {
+  projects: ProjectSmall[],
+  paginator: Paginator,
+}
+
 export interface ProjectSearchEndpointResult {
   projects: ProjectList[],
   paginator: Paginator,
@@ -131,7 +136,7 @@ interface PatternFull {
   yarn_weight_description: string,
 }
 
-export interface ProjectList {
+export interface ProjectSmall {
   comments_count: number,
   completed: string | null,
   completed_day_set: boolean,
@@ -166,8 +171,11 @@ export interface ProjectList {
   status_name: string,
   tag_names: string[],
   updated_at: string,
-  user: UserSmall,
   user_id: number,
+}
+
+export interface ProjectList extends ProjectSmall {
+  user: UserSmall,
 }
 
 interface QueuedProjectSmall {
