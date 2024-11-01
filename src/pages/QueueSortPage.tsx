@@ -130,7 +130,7 @@ export default function QueueSortPage() {
           </Form>
         </div>
       </div>
-      <div className="content">
+      <div className="content card-grid">
         {queueEntries.flatMap(entry => {
           if (
             entry.craft === 'crochet' && !showCrochet ||

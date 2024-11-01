@@ -33,6 +33,14 @@ p, ul {
   width: 100%;
 }
 
+.card-grid {
+  display: flex;
+
+  column-gap: 30px;
+  flex-wrap: wrap;
+  row-gap: 35px;
+}
+
 .block-link {
   color: inherit;
   display: flex;
