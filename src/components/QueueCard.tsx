@@ -1,11 +1,11 @@
-import type { ExtendedQueuedProjectSmall } from '../types';
+import type { CardLinkType, ExtendedQueuedProjectSmall } from '../types';
 import { buildQueueURL, DEFAULT_IMAGE } from '../utils';
 
 import './QueueCard.scss';
 
 export default function QueueCard(props: {
   queueEntry: ExtendedQueuedProjectSmall,
-  linkTo: string,
+  linkTo: CardLinkType,
 }) {
   const { queueEntry, linkTo } = props;
   const photoURL = queueEntry.best_photo?.small_url || DEFAULT_IMAGE;

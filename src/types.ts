@@ -554,3 +554,8 @@ export interface ExtendedQueuedProjectSmall extends QueuedProjectSmall {
   craft: 'crochet' | 'knitting',
   isReadyToMake: boolean,
 }
+
+export type CardLinkType = 'queue' | 'pattern';
+export function isCardLinkType(str: string): str is CardLinkType {
+  return ['queue', 'pattern'].includes(str);
+}

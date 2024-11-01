@@ -4,7 +4,7 @@ import type { LoaderFunction } from 'react-router-dom';
 import { Form, useLoaderData, useSearchParams } from 'react-router-dom';
 
 import QueueCard from '../components/QueueCard';
-import type { ExtendedQueuedProjectSmall, PatternSearchEndpointResult, QueueListEndpointResult } from '../types';
+import { type CardLinkType, type ExtendedQueuedProjectSmall, isCardLinkType, type PatternSearchEndpointResult, type QueueListEndpointResult } from '../types';
 import { get, USERNAME } from '../utils';
 
 import './QueueSortPage.scss';
@@ -66,7 +66,7 @@ const loader: LoaderFunction = async ({ request }) => {
 export default function QueueSortPage() {
   const queueEntries = useLoaderData() as ExtendedQueuedProjectSmall[];
   const [searchParams] = useSearchParams();
-  const [linkTo, setLinkTo] = useState('queue');
+  const [linkTo, setLinkTo] = useState<CardLinkType>('queue');
   const [showCrochet, setShowCrochet] = useState(true);
   const [showKnitting, setShowKnitting] = useState(true);
   const [showReady, setShowReady] = useState(true);
@@ -77,7 +77,13 @@ export default function QueueSortPage() {
   }, [queueEntries]);
 
   const handleLinkToChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setLinkTo(e.target.value);
+    const newLinkTo = e.target.value;
+    if (!isCardLinkType(newLinkTo)) {
+      console.warn('Invalid linkTo:', newLinkTo);
+      return;
+    }
+
+    setLinkTo(newLinkTo);
   };
 
   return (
