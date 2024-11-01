@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import type { LoaderFunction } from 'react-router-dom';
 import { Form, useLoaderData } from 'react-router-dom';
 
-import DetailsCard from '../components/DetailsCard';
+import DetailsDisplay from '../components/DetailsDisplay';
 import type { ProjectList, ProjectSearchEndpointResult, QueuedProjectFull, QueueListEndpointResult, QueueShowEndPointResult, StashList, StashSearchEndpointResult } from '../types';
 import { buildQueueURL, formatDatetime, get, pickRandomItem, USERNAME } from '../utils';
 
@@ -78,7 +78,7 @@ const loader: LoaderFunction = async ({ request }) => {
 
 function buildQueueEntryDisplay(queueEntry: QueuedProjectFull) {
   return (
-    <DetailsCard
+    <DetailsDisplay
       photoURL={queueEntry.best_photo?.small2_url}
       linkURL={buildQueueURL(queueEntry)}
       name={queueEntry.pattern?.name || queueEntry.name}
@@ -106,7 +106,7 @@ function buildQueueEntryDisplay(queueEntry: QueuedProjectFull) {
 
 function buildStashEntryDisplay(stashEntry: StashList) {
   return (
-    <DetailsCard
+    <DetailsDisplay
       photoURL={stashEntry.first_photo?.small2_url}
       linkURL={`https://www.ravelry.com/people/${USERNAME}/stash/${stashEntry.permalink}`}
       name={stashEntry.name}
@@ -136,7 +136,7 @@ function buildProjectDisplay(project: ProjectList) {
   }
 
   return (
-    <DetailsCard
+    <DetailsDisplay
       photoURL={project.first_photo?.small2_url}
       linkURL={`https://www.ravelry.com/projects/${USERNAME}/${project.permalink}`}
       name={project.name}

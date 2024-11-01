@@ -2,9 +2,9 @@ import { Fragment } from 'react/jsx-runtime';
 
 import { DEFAULT_IMAGE } from '../utils';
 
-import './DetailsCard.scss';
+import './DetailsDisplay.scss';
 
-export default function DetailsCard(props: {
+export default function DetailsDisplay(props: {
   photoURL?: string,
   linkURL?: string,
   name: string,
