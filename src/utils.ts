@@ -5,17 +5,27 @@ const { VITE_RAVELRY_USERNAME, VITE_RAVELRY_PASSWORD, VITE_RAVELRY_ACCOUNT_NAME 
 export const USERNAME = VITE_RAVELRY_ACCOUNT_NAME as string | undefined;
 export const DEFAULT_IMAGE = 'https://www.ravelry.com/images/assets/illustrations/color/svg/blank-skein-herdwick.svg?v=6';
 
+const AUTH_HEADER = {
+  'Authorization': btoa(`${VITE_RAVELRY_USERNAME}:${VITE_RAVELRY_PASSWORD}`),
+};
+
 export async function get(path: string, params?: { [key: string]: string }) {
   const paramsStr = params && '?' + new URLSearchParams(params).toString();
   const response = await fetch(`https://api.ravelry.com${path}${paramsStr || ''}`, {
-    headers: {
-      'Authorization': btoa(`${VITE_RAVELRY_USERNAME}:${VITE_RAVELRY_PASSWORD}`),
-    },
+    headers: AUTH_HEADER,
   });
 
-  // types should be handled on the caller side
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return await response.json();
+  return await response.json() as object;
+}
+
+export async function post(path: string, params: { [key: string]: string }) {
+  const response = await fetch(`https://api.ravelry.com${path}`, {
+    method: 'post',
+    headers: AUTH_HEADER,
+    body: JSON.stringify(params),
+  });
+
+  return await response.json() as object;
 }
 
 export function buildQueueURL(queueEntry: QueuedProjectFull | ExtendedQueuedProjectSmall) {
