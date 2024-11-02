@@ -18,7 +18,7 @@ export async function get(path: string, params?: { [key: string]: string }) {
   return await response.json() as object;
 }
 
-export async function post(path: string, params: { [key: string]: string }) {
+export async function post(path: string, params: { [key: string]: string | string[] }) {
   const response = await fetch(`https://api.ravelry.com${path}`, {
     method: 'post',
     headers: AUTH_HEADER,
