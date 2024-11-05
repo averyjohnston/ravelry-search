@@ -45,10 +45,12 @@ const action: ActionFunction = async ({ request }) => {
     personal_pattern_name: formData.get('projectName')?.toString() || 'My Project',
   };
 
+  const totalNotes = `${fullProject.notes}${fullProject.private_notes ? '\n\n' + fullProject.private_notes : ''}`;
+
   const result = await post(`/people/${USERNAME}/queue/create.json`, {
     ...patternParam,
     tag_names: [firstTag || '', 'yarn-needed'],
-    notes: shouldTransferNotes ? fullProject.notes + '\n\n' + fullProject.private_notes : '',
+    notes: shouldTransferNotes ? totalNotes : '',
   }) as QueueCreateEndpointResult;
 
   if (shouldAddAvailTag && deletedPacks) {
