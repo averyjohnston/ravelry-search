@@ -34,6 +34,10 @@ export interface ProjectSearchEndpointResult {
   paginator: Paginator,
 }
 
+export interface ProjectShowEndpointResult {
+  project: ProjectFull,
+}
+
 export interface StashSearchEndpointResult {
   stashes: StashList[],
   paginator: Paginator,
@@ -180,6 +184,10 @@ export interface ProjectSmall {
 
 export interface ProjectList extends ProjectSmall {
   user: UserSmall,
+}
+
+export interface ProjectFull extends ProjectList {
+  packs: PackFull[],
 }
 
 interface QueuedProjectSmall {

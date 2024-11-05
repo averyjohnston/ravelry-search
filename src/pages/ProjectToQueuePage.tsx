@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction, ShouldRevalidateFunction } from 'react-router-dom';
 import { useActionData, useLoaderData, useSubmit } from 'react-router-dom';
 
 import Modal from '../components/Modal';
 import RavelryCard from '../components/RavelryCard';
-import type { ProjectListEndpointResult, ProjectSmall, QueueCreateEndpointResult, QueuedProjectFull } from '../types';
+import type { ProjectListEndpointResult, ProjectShowEndpointResult, ProjectSmall, QueueCreateEndpointResult, QueuedProjectFull } from '../types';
 import { buildQueueURL, get, post, USERNAME } from '../utils';
 
 import './ProjectToQueuePage.scss';
@@ -19,15 +19,32 @@ const loader: LoaderFunction = async () => {
 
 const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
+  const projectID = formData.get('projectID')?.toString();
   const patternID = formData.get('patternID')?.toString();
   const firstTag = formData.get('firstTag')?.toString();
+  const shouldDelete = formData.get('shouldDelete')?.toString() === 'true';
+
+  let deletedPacks: DeletedPack[] | undefined = undefined;
+  if (shouldDelete) {
+    // only way to get info on yarn packs assigned to the project
+    const projectResult = await get(`/projects/${USERNAME}/${projectID}.json`) as ProjectShowEndpointResult;
+    const fullProject = projectResult.project;
+    deletedPacks = fullProject.packs.map(pack => ({
+      stashID: pack.stash_id || 0,
+      yarnName: pack.yarn_name || '',
+      colorway: pack.colorway || '',
+    }));
+  }
 
   const result = await post(`/people/${USERNAME}/queue/create.json`, {
     pattern_id: patternID || '',
     tag_names: [firstTag || '', 'yarn-needed'],
   }) as QueueCreateEndpointResult;
 
-  return result.queued_project;
+  return {
+    createdQueueEntry: result.queued_project,
+    deletedPacks,
+  };
 };
 
 const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRevalidate }) => {
@@ -35,14 +52,13 @@ const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRev
   return projectDeleted?.toString() === 'false' ? false : defaultShouldRevalidate;
 }
 
-// TODO: if project is deleted, show packs that were on it so you can manually assign them to the queue entry if needed
 // TODO: filter out projects that don't have a pattern? or show an error if attempted?
 // or can you add a queue entry with just the name and maybe the URL if present...?
 // TODO: only after queue adding is done and stable, add delete/avail tag functionality
 
 export default function ProjectToQueuePage() {
   const projects = useLoaderData() as ProjectSmall[];
-  const createdQueueEntry = useActionData() as QueuedProjectFull || null;
+  const actionResult = useActionData() as ActionResult | undefined;
   const [deleteProject, setDeleteProject] = useState(false);
   const [addAvailableTag, setAddAvailableTag] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -53,11 +69,11 @@ export default function ProjectToQueuePage() {
   }, [projects]);
 
   useEffect(() => {
-    console.log('Queue entry:', createdQueueEntry);
-    if (createdQueueEntry !== null) setShowModal(true);
-  }, [createdQueueEntry]);
+    console.log('Action result:', actionResult);
+    if (actionResult?.createdQueueEntry) setShowModal(true);
+  }, [actionResult]);
 
-  const queueEntryURL = createdQueueEntry !== null ? buildQueueURL(createdQueueEntry) : '';
+  const queueEntryURL = actionResult ? buildQueueURL(actionResult.createdQueueEntry) : '';
 
   return (
     <div id="project-to-queue-page" className="page">
@@ -87,6 +103,7 @@ export default function ProjectToQueuePage() {
               if (!result) return;
               submit({
                 patternID: project.pattern_id,
+                projectID: project.id,
                 firstTag: project.tag_names.length > 0 ? project.tag_names[0] : '',
                 shouldDelete: deleteProject,
                 shouldAddAvailTag: deleteProject && addAvailableTag, // don't add avail tags if both boxes were checked at some point, but delete was unchecked later
@@ -95,11 +112,23 @@ export default function ProjectToQueuePage() {
           </div>
         ))}
       </div>
-      {showModal && createdQueueEntry && <Modal handleClose={() => setShowModal(false)} confirmButtonText="OK">
+      {showModal && actionResult && <Modal handleClose={() => setShowModal(false)} confirmButtonText="OK">
         <p>Queue entry created successfully. View it here:</p>
         <p>
           <a href={queueEntryURL} target="_blank" rel="noreferrer">{queueEntryURL}</a>
         </p>
+        {actionResult.deletedPacks && actionResult.deletedPacks.length > 0 && <Fragment>
+          <p>The following stashed yarns were assigned to the original project. If you want them added to the new queue entry, you will need to do so manually.</p>
+          <ul>
+            {actionResult.deletedPacks.map(pack => (
+              <li key={pack.stashID}>
+                <a href={`https://www.ravelry.com/people/${USERNAME}/stash/${pack.stashID}`} target="_blank" rel="noreferrer">
+                  {pack.yarnName} ({pack.colorway})
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Fragment>}
       </Modal>}
     </div>
   )
@@ -108,3 +137,14 @@ export default function ProjectToQueuePage() {
 ProjectToQueuePage.loader = loader;
 ProjectToQueuePage.action = action;
 ProjectToQueuePage.shouldRevalidate = shouldRevalidate;
+
+interface DeletedPack {
+  stashID: number,
+  yarnName: string,
+  colorway: string,
+}
+
+interface ActionResult {
+  createdQueueEntry: QueuedProjectFull,
+  deletedPacks: DeletedPack[] | undefined,
+}
