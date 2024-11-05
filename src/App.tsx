@@ -34,6 +34,7 @@ const router = createBrowserRouter([
             element: <ProjectToQueuePage />,
             loader: ProjectToQueuePage.loader,
             action: ProjectToQueuePage.action,
+            shouldRevalidate: ProjectToQueuePage.shouldRevalidate,
           },
         ],
       },

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { ActionFunction, LoaderFunction } from 'react-router-dom';
+import type { ActionFunction, LoaderFunction, ShouldRevalidateFunction } from 'react-router-dom';
 import { useActionData, useLoaderData, useSubmit } from 'react-router-dom';
 
 import Modal from '../components/Modal';
@@ -29,6 +29,11 @@ const action: ActionFunction = async ({ request }) => {
 
   return result.queued_project;
 };
+
+const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRevalidate }) => {
+  const projectDeleted = formData?.get('shouldDelete');
+  return projectDeleted?.toString() === 'false' ? false : defaultShouldRevalidate;
+}
 
 // TODO: if project is deleted, show packs that were on it so you can manually assign them to the queue entry if needed
 // TODO: filter out projects that don't have a pattern? or show an error if attempted?
@@ -102,3 +107,4 @@ export default function ProjectToQueuePage() {
 
 ProjectToQueuePage.loader = loader;
 ProjectToQueuePage.action = action;
+ProjectToQueuePage.shouldRevalidate = shouldRevalidate;
