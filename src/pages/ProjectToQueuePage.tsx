@@ -28,6 +28,8 @@ const action: ActionFunction = async ({ request }) => {
   const projectResult = await get(`/projects/${USERNAME}/${projectID}.json`) as ProjectShowEndpointResult;
   const fullProject = projectResult.project;
 
+  console.log('Full project:', fullProject);
+
   const deletedPacks = shouldDelete ? fullProject.packs.map(pack => ({
     stashID: pack.stash_id || 0,
     yarnName: pack.yarn_name || '',
@@ -35,15 +37,16 @@ const action: ActionFunction = async ({ request }) => {
   })) : undefined;
 
   // if project has a pattern attached, use that; otherwise only send project's name
-  const queueParams: { [key: string]: string } = patternID && patternID !== 'null' ? {
+  const patternParam: { [key: string]: string } = patternID && patternID !== 'null' ? {
     pattern_id: patternID,
   } : {
     personal_pattern_name: formData.get('projectName')?.toString() || 'My Project',
   };
 
   const result = await post(`/people/${USERNAME}/queue/create.json`, {
-    ...queueParams,
+    ...patternParam,
     tag_names: [firstTag || '', 'yarn-needed'],
+    notes: fullProject.notes + '\n\n' + fullProject.private_notes,
   }) as QueueCreateEndpointResult;
 
   return {
@@ -57,7 +60,6 @@ const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRev
   return projectDeleted?.toString() === 'false' ? false : defaultShouldRevalidate;
 }
 
-// TODO: transfer notes/private notes if possible
 // TODO: only after queue adding is done and stable, add delete/avail tag functionality
 
 export default function ProjectToQueuePage() {

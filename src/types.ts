@@ -187,7 +187,11 @@ export interface ProjectList extends ProjectSmall {
 }
 
 export interface ProjectFull extends ProjectList {
+  notes: string,
+  notes_html: string,
   packs: PackFull[],
+  private_notes: string,
+  private_notes_html: string,
 }
 
 interface QueuedProjectSmall {
