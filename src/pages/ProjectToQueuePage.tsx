@@ -24,17 +24,15 @@ const action: ActionFunction = async ({ request }) => {
   const firstTag = formData.get('firstTag')?.toString();
   const shouldDelete = formData.get('shouldDelete')?.toString() === 'true';
 
-  let deletedPacks: DeletedPack[] | undefined = undefined;
-  if (shouldDelete) {
-    // only way to get info on yarn packs assigned to the project
-    const projectResult = await get(`/projects/${USERNAME}/${projectID}.json`) as ProjectShowEndpointResult;
-    const fullProject = projectResult.project;
-    deletedPacks = fullProject.packs.map(pack => ({
-      stashID: pack.stash_id || 0,
-      yarnName: pack.yarn_name || '',
-      colorway: pack.colorway || '',
-    }));
-  }
+  // needed for yarn packs and notes, which aren't exposed on the project/list endpoint
+  const projectResult = await get(`/projects/${USERNAME}/${projectID}.json`) as ProjectShowEndpointResult;
+  const fullProject = projectResult.project;
+
+  const deletedPacks = shouldDelete ? fullProject.packs.map(pack => ({
+    stashID: pack.stash_id || 0,
+    yarnName: pack.yarn_name || '',
+    colorway: pack.colorway || '',
+  })) : undefined;
 
   // if project has a pattern attached, use that; otherwise only send project's name
   const queueParams: { [key: string]: string } = patternID && patternID !== 'null' ? {
