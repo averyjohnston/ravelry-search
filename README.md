@@ -1,6 +1,6 @@
 # Ravelry Search
 
-A personal app that interacts with the Ravelry API to display various data in arrangements that aren't possible on the actual site.
+A personal app that interacts with the Ravelry API to automate certain tasks and display various data in arrangements that aren't possible on the actual site.
 
 Currently not hosted live, but if you want to try it yourself, you can do the following:
 
