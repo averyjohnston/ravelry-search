@@ -5,7 +5,7 @@ import { useActionData, useLoaderData, useSubmit } from 'react-router-dom';
 import Modal from '../components/Modal';
 import RavelryCard from '../components/RavelryCard';
 import type { ProjectListEndpointResult, ProjectShowEndpointResult, ProjectSmall, QueueCreateEndpointResult, QueuedProjectFull } from '../types';
-import { buildQueueURL, get, post, USERNAME } from '../utils';
+import { buildQueueURL, del, get, post, USERNAME } from '../utils';
 
 import './ProjectToQueuePage.scss';
 
@@ -59,6 +59,10 @@ const action: ActionFunction = async ({ request }) => {
     await Promise.all(stashUpdates);
   }
 
+  if (shouldDelete) {
+    await del(`/projects/${USERNAME}/${projectID}.json`);
+  }
+
   return {
     createdQueueEntry: result.queued_project,
     deletedPacks,
@@ -69,8 +73,6 @@ const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRev
   const projectDeleted = formData?.get('shouldDelete');
   return projectDeleted?.toString() === 'false' ? false : defaultShouldRevalidate;
 }
-
-// TODO: add delete functionality
 
 export default function ProjectToQueuePage() {
   const projects = useLoaderData() as ProjectSmall[];

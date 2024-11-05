@@ -28,6 +28,15 @@ export async function post(path: string, params: { [key: string]: string | strin
   return await response.json() as object;
 }
 
+export async function del(path: string) {
+  const response = await fetch(`https://api.ravelry.com${path}`, {
+    method: 'delete',
+    headers: AUTH_HEADER,
+  });
+
+  return await response.json() as object;
+}
+
 export function buildQueueURL(queueEntry: QueuedProjectFull | ExtendedQueuedProjectSmall) {
   const queuePosition = queueEntry.position_in_queue || queueEntry.sort_order || 1;
   return `https://www.ravelry.com/people/${USERNAME}/queue?view=thumblist&page=${Math.ceil(queuePosition / 30)}#q${queuePosition}`;
