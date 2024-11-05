@@ -22,8 +22,9 @@ const action: ActionFunction = async ({ request }) => {
   const projectID = formData.get('projectID')?.toString();
   const patternID = formData.get('patternID')?.toString();
   const firstTag = formData.get('firstTag')?.toString();
-  const shouldDelete = formData.get('shouldDelete')?.toString() === 'true';
   const shouldTransferNotes = formData.get('shouldTransferNotes')?.toString() === 'true';
+  const shouldDelete = formData.get('shouldDelete')?.toString() === 'true';
+  const shouldAddAvailTag = formData.get('shouldAddAvailTag')?.toString() === 'true';
 
   // needed for yarn packs and notes, which aren't exposed on the project/list endpoint
   const projectResult = await get(`/projects/${USERNAME}/${projectID}.json`) as ProjectShowEndpointResult;
@@ -50,6 +51,14 @@ const action: ActionFunction = async ({ request }) => {
     notes: shouldTransferNotes ? fullProject.notes + '\n\n' + fullProject.private_notes : '',
   }) as QueueCreateEndpointResult;
 
+  if (shouldAddAvailTag && deletedPacks) {
+    const stashUpdates = deletedPacks.map(pack => post(`/people/${USERNAME}/stash/${pack.stashID}.json`, {
+      tag_list: ['available'],
+    }));
+
+    await Promise.all(stashUpdates);
+  }
+
   return {
     createdQueueEntry: result.queued_project,
     deletedPacks,
@@ -61,7 +70,7 @@ const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRev
   return projectDeleted?.toString() === 'false' ? false : defaultShouldRevalidate;
 }
 
-// TODO: only after queue adding is done and stable, add delete/avail tag functionality
+// TODO: add delete functionality
 
 export default function ProjectToQueuePage() {
   const projects = useLoaderData() as ProjectSmall[];
