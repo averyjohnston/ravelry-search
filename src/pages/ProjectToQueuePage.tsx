@@ -36,8 +36,15 @@ const action: ActionFunction = async ({ request }) => {
     }));
   }
 
+  // if project has a pattern attached, use that; otherwise only send project's name
+  const queueParams: { [key: string]: string } = patternID && patternID !== 'null' ? {
+    pattern_id: patternID,
+  } : {
+    personal_pattern_name: formData.get('projectName')?.toString() || 'My Project',
+  };
+
   const result = await post(`/people/${USERNAME}/queue/create.json`, {
-    pattern_id: patternID || '',
+    ...queueParams,
     tag_names: [firstTag || '', 'yarn-needed'],
   }) as QueueCreateEndpointResult;
 
@@ -52,8 +59,7 @@ const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRev
   return projectDeleted?.toString() === 'false' ? false : defaultShouldRevalidate;
 }
 
-// TODO: filter out projects that don't have a pattern? or show an error if attempted?
-// or can you add a queue entry with just the name and maybe the URL if present...?
+// TODO: transfer notes/private notes if possible
 // TODO: only after queue adding is done and stable, add delete/avail tag functionality
 
 export default function ProjectToQueuePage() {
@@ -104,6 +110,7 @@ export default function ProjectToQueuePage() {
               submit({
                 patternID: project.pattern_id,
                 projectID: project.id,
+                projectName: project.name,
                 firstTag: project.tag_names.length > 0 ? project.tag_names[0] : '',
                 shouldDelete: deleteProject,
                 shouldAddAvailTag: deleteProject && addAvailableTag, // don't add avail tags if both boxes were checked at some point, but delete was unchecked later
