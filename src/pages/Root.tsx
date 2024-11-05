@@ -4,11 +4,6 @@ import SidebarLink from '../components/SidebarLink';
 
 import './Root.scss';
 
-// TODO: reattempt moving a project into the queue?
-// delete project, add queue entry, option to mark stash entries as available?
-// carry over notes + private notes? (latter should be visible if you're the project owner)
-// API doesn't have a way to assign stash entries to a queue entry programmatically
-
 export default function Root() {
   const navigation = useNavigation();
 
