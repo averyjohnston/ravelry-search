@@ -28,7 +28,7 @@ export default function Root() {
         </ul>
       </div>
       <div id="content">
-        {navigation.state === 'loading' && <div className="progress-bar">
+        {(navigation.state === 'loading' || navigation.state === 'submitting') && <div className="progress-bar">
           <div className="progress-bar-inner" />
         </div>}
         <Outlet />
