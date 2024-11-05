@@ -23,6 +23,7 @@ const action: ActionFunction = async ({ request }) => {
   const patternID = formData.get('patternID')?.toString();
   const firstTag = formData.get('firstTag')?.toString();
   const shouldDelete = formData.get('shouldDelete')?.toString() === 'true';
+  const shouldTransferNotes = formData.get('shouldTransferNotes')?.toString() === 'true';
 
   // needed for yarn packs and notes, which aren't exposed on the project/list endpoint
   const projectResult = await get(`/projects/${USERNAME}/${projectID}.json`) as ProjectShowEndpointResult;
@@ -46,7 +47,7 @@ const action: ActionFunction = async ({ request }) => {
   const result = await post(`/people/${USERNAME}/queue/create.json`, {
     ...patternParam,
     tag_names: [firstTag || '', 'yarn-needed'],
-    notes: fullProject.notes + '\n\n' + fullProject.private_notes,
+    notes: shouldTransferNotes ? fullProject.notes + '\n\n' + fullProject.private_notes : '',
   }) as QueueCreateEndpointResult;
 
   return {
@@ -65,6 +66,7 @@ const shouldRevalidate: ShouldRevalidateFunction = ({ formData, defaultShouldRev
 export default function ProjectToQueuePage() {
   const projects = useLoaderData() as ProjectSmall[];
   const actionResult = useActionData() as ActionResult | undefined;
+  const [transferNotes, setTransferNotes] = useState(true);
   const [deleteProject, setDeleteProject] = useState(false);
   const [addAvailableTag, setAddAvailableTag] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -86,6 +88,10 @@ export default function ProjectToQueuePage() {
       <div className="header header--sticky">
         <p>Select a project below to be transferred to the queue.</p>
         <div className="options">
+          <label>
+            <input type="checkbox" checked={transferNotes} onChange={(e) => setTransferNotes(e.target.checked)} />
+            Transfer notes (incl. private)
+          </label>
           <label>
             <input type="checkbox" checked={deleteProject} onChange={(e) => setDeleteProject(e.target.checked)} />
             Delete project when done
@@ -119,6 +125,7 @@ export default function ProjectToQueuePage() {
                 projectID: project.id,
                 projectName: project.name,
                 firstTag: project.tag_names.length > 0 ? project.tag_names[0] : '',
+                shouldTransferNotes: transferNotes,
                 shouldDelete: deleteProject,
                 shouldAddAvailTag: deleteProject && addAvailableTag, // don't add avail tags if both boxes were checked at some point, but delete was unchecked later
               }, { method: 'post' });
