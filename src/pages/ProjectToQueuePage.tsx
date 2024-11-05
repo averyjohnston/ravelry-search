@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { ActionFunction, LoaderFunction } from 'react-router-dom';
-import { useLoaderData, useSubmit } from 'react-router-dom';
+import { useActionData, useLoaderData, useSubmit } from 'react-router-dom';
 
+import Modal from '../components/Modal';
 import RavelryCard from '../components/RavelryCard';
-import type { ProjectListEndpointResult, ProjectSmall } from '../types';
-import { get, post, USERNAME } from '../utils';
+import type { ProjectListEndpointResult, ProjectSmall, QueueCreateEndpointResult, QueuedProjectFull } from '../types';
+import { buildQueueURL, get, post, USERNAME } from '../utils';
 
 import './ProjectToQueuePage.scss';
 
@@ -24,14 +25,11 @@ const action: ActionFunction = async ({ request }) => {
   const result = await post(`/people/${USERNAME}/queue/create.json`, {
     pattern_id: patternID || '',
     tag_names: [firstTag || '', 'yarn-needed'],
-  });
+  }) as QueueCreateEndpointResult;
 
-  console.log('POST result:', result);
-
-  return null;
+  return result.queued_project;
 };
 
-// TODO: show a modal with a confirmation message and link to the queue entry
 // TODO: if project is deleted, show packs that were on it so you can manually assign them to the queue entry if needed
 // TODO: filter out projects that don't have a pattern? or show an error if attempted?
 // or can you add a queue entry with just the name and maybe the URL if present...?
@@ -39,13 +37,22 @@ const action: ActionFunction = async ({ request }) => {
 
 export default function ProjectToQueuePage() {
   const projects = useLoaderData() as ProjectSmall[];
+  const createdQueueEntry = useActionData() as QueuedProjectFull || null;
   const [deleteProject, setDeleteProject] = useState(false);
   const [addAvailableTag, setAddAvailableTag] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const submit = useSubmit();
 
   useEffect(() => {
-    console.log(projects);
+    console.log('Projects:', projects);
   }, [projects]);
+
+  useEffect(() => {
+    console.log('Queue entry:', createdQueueEntry);
+    if (createdQueueEntry !== null) setShowModal(true);
+  }, [createdQueueEntry]);
+
+  const queueEntryURL = createdQueueEntry !== null ? buildQueueURL(createdQueueEntry) : '';
 
   return (
     <div id="project-to-queue-page" className="page">
@@ -83,6 +90,12 @@ export default function ProjectToQueuePage() {
           </div>
         ))}
       </div>
+      {showModal && createdQueueEntry && <Modal handleClose={() => setShowModal(false)} confirmButtonText="OK">
+        <p>Queue entry created successfully. View it here:</p>
+        <p>
+          <a href={queueEntryURL} target="_blank" rel="noreferrer">{queueEntryURL}</a>
+        </p>
+      </Modal>}
     </div>
   )
 }

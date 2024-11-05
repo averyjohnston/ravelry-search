@@ -6,6 +6,10 @@
 
 // --- endpoint results ---
 
+export interface QueueCreateEndpointResult {
+  queued_project: QueuedProjectFull,
+}
+
 export interface QueueListEndpointResult {
   queued_projects: QueuedProjectSmall[],
   paginator: Paginator,
@@ -188,7 +192,7 @@ interface QueuedProjectSmall {
   pattern_author_name: string,
   pattern_id: number | null,
   pattern_name: string,
-  position_in_queue: number,
+  position_in_queue: number | null,
   short_pattern_name: string,
   skeins: number | null,
   sort_order: number | null,
@@ -207,7 +211,7 @@ export interface QueuedProjectFull {
   pattern: PatternFull,
   pattern_id: number | null,
   pattern_name: string,
-  position_in_queue: number,
+  position_in_queue: number | null,
   queued_stashes: QueuedStashFull[],
   skeins: number | null,
   sort_order: number | null,
