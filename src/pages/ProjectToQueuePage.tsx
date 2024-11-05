@@ -120,7 +120,11 @@ export default function ProjectToQueuePage() {
               linkURL={`https://www.ravelry.com/projects/${USERNAME}/${project.permalink}`}
             />
             <button onClick={() => {
-              let message = `Are you sure you want to transfer the project "${project.name}" to the queue? The original project will ${deleteProject ? '' : 'NOT '}be deleted${deleteProject ? ' and cannot be recovered!' : '.'}`;
+              let message = `Are you sure you want to transfer the project "${project.name}" to the queue?`;
+
+              message += deleteProject ?
+                '\n\n⚠️ The original project will be deleted and cannot be recovered.' :
+                ' The original project will NOT be deleted.';
 
               // doesn't seem like project API has a way to retrieve "pattern from" contents
               if (project.pattern_id === null) {
