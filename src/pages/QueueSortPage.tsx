@@ -48,15 +48,21 @@ const loader: LoaderFunction = async ({ request }) => {
     }),
   ]) as [QueueListEndpointResult, QueueListEndpointResult, PatternSearchEndpointResult];
 
-  const readyToMakeIDs = readyToMakeQueueResult.queued_projects.map(entry => entry.pattern_id);
-  const knittingIDs = knittingPatternResult.patterns.map(pattern => pattern.id);
+  /**
+   * Use queue entry IDs for ready-to-make/yarn-needed to handle entries that don't have
+   * linked patterns. The linked pattern is the only way to add craft info though, so we
+   * still need to use it for knitting/crochet. This isn't perfect since knitting entries
+   * without a Ravelry pattern will be marked as crochet, but there's not much we can do.
+   */
+  const readyToMakeEntryIDs = readyToMakeQueueResult.queued_projects.map(entry => entry.id);
+  const knittingPatternIDs = knittingPatternResult.patterns.map(pattern => pattern.id);
   const extendedQueue: ExtendedQueuedProjectSmall[] = [];
 
   for(const queueEntry of totalQueueResult.queued_projects) {
     extendedQueue.push({
       ...queueEntry,
-      craft: knittingIDs.indexOf(queueEntry.pattern_id || -1) > -1 ? 'knitting' : 'crochet',
-      isReadyToMake: readyToMakeIDs.indexOf(queueEntry.pattern_id || -1) > -1,
+      craft: knittingPatternIDs.indexOf(queueEntry.pattern_id || -1) > -1 ? 'knitting' : 'crochet',
+      isReadyToMake: readyToMakeEntryIDs.indexOf(queueEntry.id || -1) > -1,
     });
   }
 
