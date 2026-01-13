@@ -23,18 +23,33 @@ const loader: LoaderFunction = async ({ request }) => {
   const currSearchParams = new URL(request.url).searchParams;
   const tagFilter = currSearchParams.get('filter');
   const weightFilter = currSearchParams.get('weight');
+  
+  /**
+   * Ravelry's tag search has a bug where implicitly ANDing two tags together can
+   * sometimes return incorrect results. The most relevant way this manifests is
+   * searching [any-text]-k [yarn-weight], where there are no results for the first
+   * tag; this will return results as if you'd ONLY searched for the second tag,
+   * instead of the expected 0 results. Weirdly, this has only been noted with tags
+   * using that "-k" suffix -- "foo dk" works as desired, but "foo-k dk" doesn't.
+   * 
+   * This is a bandaid fix to avoid the most common ways this bug will be triggered
+   * in personal day-to-day usage, until the Ravelry bug can be better understood.
+   */
+  const includeKnitTag = tagFilter !== 'multicolor-possible' && tagFilter !== 'scrap-buster';
 
   const queueURL = `/people/${USERNAME}/queue/list.json`;
   let query = '';
   if (tagFilter && !weightFilter) {
-    query = `${tagFilter} OR ${tagFilter}-k`;
+    query = `${tagFilter}${includeKnitTag ? ` OR ${tagFilter}-k` : ''}`;
   } else if (weightFilter && !tagFilter) {
     query = `${weightTagMap[weightFilter]} OR any-weight`;
   } else if (tagFilter && weightFilter) {
     const weightName = weightTagMap[weightFilter];
     // Ravelry search doesn't let you use parens, but just doing a space means "AND" so this is good enough
-    query = `${tagFilter} ${weightName} OR ${tagFilter}-k ${weightName} OR ${tagFilter} any-weight OR ${tagFilter}-k any-weight`; 
+    query = `${tagFilter} ${weightName}${includeKnitTag ? ` OR ${tagFilter}-k ${weightName}` : ''} OR ${tagFilter} any-weight${includeKnitTag ? ` OR ${tagFilter}-k any-weight` : ''}`; 
   }
+  console.log('query:', query);
+  
   const queueSearchParams = {
     page_size: '500',
     query_type: 'tags',
