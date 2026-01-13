@@ -1,18 +1,23 @@
 #queue-sort-page {
-  .sort-controls {
+  .sort-controls, .sort-controls form {
     display: flex;
 
     column-gap: 30px;
+    
+    button {
+      align-self: center;
+    }
+  }
+  
+  .sort-controls__option {
+    user-select: none;
 
-    &__option {
-      user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-      display: flex;
-      flex-direction: column;
-
-      input[type='text'] {
-        width: 100px;
-      }
+    input[type='text'] {
+      width: 100px;
     }
   }
 }

@@ -9,14 +9,36 @@ import { get, USERNAME } from '../utils';
 
 import './QueueSortPage.scss';
 
+const weightTagMap: { [key: string]: string } = {
+  '1': 'fingering',
+  '2': 'sport',
+  '3': 'dk',
+  '4': 'worsted',
+  '5': 'bulky',
+  '6': 'super-bulky',
+  'any': 'any-weight',
+};
+
 const loader: LoaderFunction = async ({ request }) => {
-  const tagFilter = new URL(request.url).searchParams.get('filter');
+  const currSearchParams = new URL(request.url).searchParams;
+  const tagFilter = currSearchParams.get('filter');
+  const weightFilter = currSearchParams.get('weight');
 
   const queueURL = `/people/${USERNAME}/queue/list.json`;
+  let query = '';
+  if (tagFilter && !weightFilter) {
+    query = `${tagFilter} OR ${tagFilter}-k`;
+  } else if (weightFilter && !tagFilter) {
+    query = `${weightTagMap[weightFilter]} OR any-weight`;
+  } else if (tagFilter && weightFilter) {
+    const weightName = weightTagMap[weightFilter];
+    // Ravelry search doesn't let you use parens, but just doing a space means "AND" so this is good enough
+    query = `${tagFilter} ${weightName} OR ${tagFilter}-k ${weightName} OR ${tagFilter} any-weight OR ${tagFilter}-k any-weight`; 
+  }
   const queueSearchParams = {
     page_size: '500',
     query_type: 'tags',
-    query: tagFilter ? `${tagFilter} OR ${tagFilter}-k` : '',
+    query,
   };
 
   const patternURL = '/patterns/search.json';
@@ -128,13 +150,26 @@ export default function QueueSortPage() {
             Yarn needed
           </label>
         </div>
-        <div className="sort-controls__option">
-          <label htmlFor="filter">Filter by project type:</label>
-          <Form>
+        <Form>
+          <div className="sort-controls__option">
+            <label htmlFor="filter">Filter by project type:</label>
             <input type="text" name="filter" id="filter" defaultValue={searchParams.get('filter') || undefined} />
-            <button type="submit">Go</button>
-          </Form>
-        </div>
+          </div>
+          <div className="sort-controls__option">
+            <label htmlFor="weight">Filter by yarn weight:</label>
+            <select name="weight" id="weight" defaultValue={searchParams.get('weight') || ''}>
+              <option value="">-</option>
+              <option value="1">Fingering</option>
+              <option value="2">Sport</option>
+              <option value="3">DK</option>
+              <option value="4">Worsted</option>
+              <option value="5">Bulky</option>
+              <option value="6">Super Bulky</option>
+              <option value="any">Any weight</option>
+            </select>
+          </div>
+          <button type="submit">Go</button>
+        </Form>
       </div>
       <div className="content card-grid">
         {queueEntries.flatMap(entry => {
