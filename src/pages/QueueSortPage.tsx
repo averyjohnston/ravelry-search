@@ -23,6 +23,7 @@ const loader: LoaderFunction = async ({ request }) => {
   const currSearchParams = new URL(request.url).searchParams;
   const tagFilter = currSearchParams.get('filter');
   const weightFilter = currSearchParams.get('weight');
+  const includeAnyWeight = currSearchParams.get('include-any-weight');
   
   /**
    * Ravelry's tag search has a bug where implicitly ANDing two tags together can
@@ -42,11 +43,13 @@ const loader: LoaderFunction = async ({ request }) => {
   if (tagFilter && !weightFilter) {
     query = `${tagFilter}${includeKnitTag ? ` OR ${tagFilter}-k` : ''}`;
   } else if (weightFilter && !tagFilter) {
-    query = `${weightTagMap[weightFilter]} OR any-weight`;
+    query = `${weightTagMap[weightFilter]}${includeAnyWeight ? ' OR any-weight' : ''}`;
   } else if (tagFilter && weightFilter) {
     const weightName = weightTagMap[weightFilter];
+    const anyWeightQuery = includeAnyWeight ? ` OR ${tagFilter} any-weight${includeKnitTag ? ` OR ${tagFilter}-k any-weight` : ''}` : '';
+    
     // Ravelry search doesn't let you use parens, but just doing a space means "AND" so this is good enough
-    query = `${tagFilter} ${weightName}${includeKnitTag ? ` OR ${tagFilter}-k ${weightName}` : ''} OR ${tagFilter} any-weight${includeKnitTag ? ` OR ${tagFilter}-k any-weight` : ''}`; 
+    query = `${tagFilter} ${weightName}${includeKnitTag ? ` OR ${tagFilter}-k ${weightName}` : ''}${anyWeightQuery}`; 
   }
   console.log('query:', query);
   
@@ -114,6 +117,7 @@ export default function QueueSortPage() {
   const [showKnitting, setShowKnitting] = useState(true);
   const [showReady, setShowReady] = useState(true);
   const [showYarnNeeded, setShowYarnNeeded] = useState(true);
+  const [includeAnyWeight, setIncludeAnyWeight] = useState(true);
 
   useEffect(() => {
     console.log(queueEntries);
@@ -182,6 +186,10 @@ export default function QueueSortPage() {
               <option value="6">Super Bulky</option>
               <option value="any">Any weight</option>
             </select>
+            <label>
+              <input type="checkbox" name="include-any-weight" checked={includeAnyWeight} onChange={(e) => setIncludeAnyWeight(e.target.checked)} />
+              Include any-weight
+            </label>
           </div>
           <button type="submit">Go</button>
         </Form>
